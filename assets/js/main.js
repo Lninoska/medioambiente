@@ -1,36 +1,33 @@
-$(document).ready(function () {
-    $("#buscar").on("click", function () {
-        const comuna = $("#Ingresar").val().toLowerCase();
-        $.ajax({
-            url: "https://sinca.mma.gob.cl/index.php/json/listadomapa2k19/",
-            method: "GET",
-            dataType: "json",
-            success: function (data) {
-                let post = ''
-                let results = 0
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("buscar").addEventListener("click", function () {
+        const comuna = document.getElementById("Ingresar").value.toLowerCase();
+        fetch("https://sinca.mma.gob.cl/index.php/json/listadomapa2k19/")
+            .then(response => response.json())
+            .then(data => {
+                let post = '';
+                let results = 0;
                 for (let i = 0; i < data.length; i++) {
                     if (data[i].comuna.toLowerCase().includes(comuna)) {
-                        const calidadAire = data[i].status || 'No disponible'; {
-                            post += `
-                    <ul>
+                        const calidadaire = data[i].status || 'No disponible';
+                        post += `
+                            <ul>
                                 <li><strong>Comuna:</strong> ${data[i].comuna}</li>
                                 <li><strong>Región:</strong> ${data[i].region}</li>
-                                <li><strong>Concentración de la contaminación:</strong> ${calidadAire}</li>
-                                <li><strong>Calidad del Aire:</strong> ${calidadAire}</li>
+                                <li><strong>Concentración de la contaminación:</strong> ${calidadaire}</li>
+                                <li><strong>Calidad del Aire:</strong> ${calidadaire}</li>
                             </ul><hr>
-                    `; results++;
-                        }
+                        `;
+                        results++;
                     }
                 }
                 if (results === 0) {
                     post = '<p>No se encontraron resultados para la comuna ingresada.</p>';
                 }
-                $("#consulta").html(post);
-            },
-            error: function (error) {
-                $("#consulta").html('<p>Hubo algún error al realizar la consulta. Por favor, intenta nuevamente.</p>');
-            }
-        })
+                document.getElementById("consulta").innerHTML = post;
+            })
+            .catch(error => {
+                document.getElementById("consulta").innerHTML = '<p>Hubo algún error al realizar la consulta. Por favor, intenta nuevamente.</p>';
+                console.error("Error al obtener datos:", error);
+            })
     })
 })
-
